@@ -19,9 +19,21 @@ namespace Fuel
 
 
         int num = 0;
-        private void button1_Click(object sender, EventArgs e)
+        private void btnUp_Click(object sender, EventArgs e)
         {
-            rollingNumber1.SetNumber(num++);
+            if(num < 9)
+                rollingNumber1.SetNumber(++num);
+        }
+
+        private void btnDown_Click(object sender, EventArgs e)
+        {
+            if (num > 0)
+                rollingNumber1.SetNumber(--num);
+        }
+
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+
         }
     }
 }

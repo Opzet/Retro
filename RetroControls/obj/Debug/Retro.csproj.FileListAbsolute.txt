@@ -4,3 +4,9 @@ D:\source\repos\Fuel\Retro\obj\Debug\Retro.csproj.AssemblyReference.cache
 D:\source\repos\Fuel\Retro\obj\Debug\Retro.csproj.CoreCompileInputs.cache
 D:\source\repos\Fuel\Retro\obj\Debug\Retro.dll
 D:\source\repos\Fuel\Retro\obj\Debug\Retro.pdb
+D:\source\repos\Retro\RetroControls\obj\Debug\Retro.csproj.AssemblyReference.cache
+D:\source\repos\Retro\RetroControls\obj\Debug\Retro.csproj.CoreCompileInputs.cache
+D:\source\repos\Retro\RetroControls\obj\Debug\Retro.dll
+D:\source\repos\Retro\RetroControls\obj\Debug\Retro.pdb
+D:\source\repos\Retro\RetroControls\bin\Debug\Retro.dll
+D:\source\repos\Retro\RetroControls\bin\Debug\Retro.pdb

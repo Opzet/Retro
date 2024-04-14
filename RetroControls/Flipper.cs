@@ -17,6 +17,11 @@ public partial class Flipper : UserControl
     private PictureBox pictureBox2 = new PictureBox();
     private PictureBox pictureBox3 = new PictureBox();
 
+    /*
+        CSS
+        border-radius: 8px;
+        box-shadow: rgba(0,0,0,0.31) 5px 5px 10px 0px;
+    */
 
     public enum Style
     {

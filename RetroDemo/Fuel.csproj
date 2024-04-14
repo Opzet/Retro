@@ -84,7 +84,7 @@
     <Content Include="Fuel Pump Readout.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Retro\Retro.csproj">
+    <ProjectReference Include="..\RetroControls\Retro.csproj">
       <Project>{b01883ab-c352-4038-a25e-7b9cb9d443d4}</Project>
       <Name>Retro</Name>
     </ProjectReference>

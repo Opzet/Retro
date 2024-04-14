@@ -1,67 +1,68 @@
-﻿/// <summary>
-/// Retro Barrel Fuel Pump 
-/// Ability to set a new alphanumeric character for retro display to smoothly animate roll to
-/// </summary>
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
-using System.ComponentModel;
-
 
 public class RollingNumber : UserControl
 {
     private Timer animationTimer;
     private int currentNumber = 0;
     private int targetNumber = 0;
-    private float animationProgress = 0f; // 0 (start) to 1 (end)
+    private float animationProgress = 0f; // Animation progress from 0 (start) to 1 (end)
     private Font retroFont;
     private Brush foreBrush;
     private readonly int numberHeight;
+    private bool incrementing;
 
     public RollingNumber()
     {
-        retroFont = new Font("Consolas", 48, FontStyle.Bold); // Adjust size/style as needed
-        foreBrush = new SolidBrush(Color.FromArgb(255, 255, 108, 0)); // A bright orange as the foreground color
-        BackColor = Color.Black; // Set the background color to black
+        retroFont = new Font("Consolas", 48, FontStyle.Bold);
+        foreBrush = new SolidBrush(Color.FromArgb(225, 212, 212, 212)); // Bright orange
+        BackColor = Color.Black;
         numberHeight = (int)CreateGraphics().MeasureString("0", retroFont).Height;
 
-        if (!this.DesignMode)
+        animationTimer = new Timer
         {
-            animationTimer = new Timer
-            {
-                Interval = 50 // Adjust the speed of the animation here
-            };
-            animationTimer.Tick += (sender, e) => AnimateNumber();
-        }
+            Interval = 50 // Animation speed
+        };
+        animationTimer.Tick += (sender, e) => AnimateNumber();
         DoubleBuffered = true;
+
+        // Handling the control's appearance in design mode
+        if (this.DesignMode)
+        {
+            Invalidate(); // This ensures that the control is redrawn in the designer
+        }
     }
 
     public void SetNumber(int number)
     {
-        targetNumber = number;
-        animationProgress = 0f;
-
-        if (!this.DesignMode && animationTimer != null)
+        if (number != targetNumber)
         {
-            animationTimer.Start();
-        }
-        else
-        {
-            currentNumber = targetNumber;
-            Invalidate();
+            targetNumber = number;
+            incrementing = targetNumber > currentNumber || (currentNumber == 9 && targetNumber == 0);
+            animationProgress = 0f;
+            if (!this.DesignMode && animationTimer != null)
+            {
+                animationTimer.Start();
+            }
+            else
+            {
+                currentNumber = targetNumber;
+                Invalidate();
+            }
         }
     }
 
     private void AnimateNumber()
     {
-        animationProgress += 0.05f; // Increment to control speed
+        animationProgress += 0.05f;
         if (animationProgress >= 1f)
         {
             animationProgress = 0f;
             currentNumber = targetNumber;
-            animationTimer?.Stop();
+            animationTimer.Stop();
         }
         Invalidate();
     }
@@ -74,11 +75,27 @@ public class RollingNumber : UserControl
         g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
         g.Clear(BackColor);
 
-        // Draw the previous, current, and next numbers
-        DrawNumber(g, GetPreviousNumber(currentNumber), -numberHeight + (numberHeight * animationProgress));
-        DrawNumber(g, currentNumber, numberHeight * animationProgress);
-        DrawNumber(g, GetNextNumber(currentNumber), numberHeight + (numberHeight * animationProgress));
+        // Check if incrementing or decrementing and adjust the drawing logic accordingly
+        if (incrementing)
+        {
+            // When incrementing, make the current number move upwards
+            DrawNumber(g, currentNumber, numberHeight * animationProgress);
+            DrawNumber(g, GetNextNumber(currentNumber), -numberHeight + numberHeight * animationProgress);
+        }
+        else
+        {
+            // When decrementing, make the current number move downwards
+            DrawNumber(g, currentNumber, -numberHeight * animationProgress);
+            DrawNumber(g, GetPreviousNumber(currentNumber), numberHeight - numberHeight * animationProgress);
+        }
+
+        // Always draw the current number statically if not animating or in design mode
+        if (animationProgress == 0f || this.DesignMode)
+        {
+            DrawNumber(g, currentNumber, 0);
+        }
     }
+
 
     private void DrawNumber(Graphics g, int number, float yOffset)
     {
