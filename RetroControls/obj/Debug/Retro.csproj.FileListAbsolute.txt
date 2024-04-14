@@ -1,0 +1,6 @@
+D:\source\repos\Fuel\Retro\bin\Debug\Retro.dll
+D:\source\repos\Fuel\Retro\bin\Debug\Retro.pdb
+D:\source\repos\Fuel\Retro\obj\Debug\Retro.csproj.AssemblyReference.cache
+D:\source\repos\Fuel\Retro\obj\Debug\Retro.csproj.CoreCompileInputs.cache
+D:\source\repos\Fuel\Retro\obj\Debug\Retro.dll
+D:\source\repos\Fuel\Retro\obj\Debug\Retro.pdb
