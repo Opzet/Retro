@@ -10,3 +10,11 @@ D:\source\repos\Retro\RetroControls\obj\Debug\Retro.dll
 D:\source\repos\Retro\RetroControls\obj\Debug\Retro.pdb
 D:\source\repos\Retro\RetroControls\bin\Debug\Retro.dll
 D:\source\repos\Retro\RetroControls\bin\Debug\Retro.pdb
+C:\Users\David\Source\Repos\Retro\RetroControls\bin\Debug\Retro.dll
+C:\Users\David\Source\Repos\Retro\RetroControls\bin\Debug\Retro.pdb
+C:\Users\David\Source\Repos\Retro\RetroControls\obj\Debug\Retro.csproj.AssemblyReference.cache
+C:\Users\David\Source\Repos\Retro\RetroControls\obj\Debug\Retro.csproj.CoreCompileInputs.cache
+C:\Users\David\Source\Repos\Retro\RetroControls\obj\Debug\Retro.dll
+C:\Users\David\Source\Repos\Retro\RetroControls\obj\Debug\Retro.pdb
+C:\Users\David\source\repos\Retro\RetroControls\obj\Debug\Flipper.resources
+C:\Users\David\source\repos\Retro\RetroControls\obj\Debug\Retro.csproj.GenerateResource.cache

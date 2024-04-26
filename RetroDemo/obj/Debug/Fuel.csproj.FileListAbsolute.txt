@@ -24,3 +24,16 @@ D:\source\repos\Retro\RetroDemo\obj\Debug\Fuel.csproj.CoreCompileInputs.cache
 D:\source\repos\Retro\RetroDemo\obj\Debug\Fuel.csproj.Up2Date
 D:\source\repos\Retro\RetroDemo\obj\Debug\Fuel.exe
 D:\source\repos\Retro\RetroDemo\obj\Debug\Fuel.pdb
+C:\Users\David\Source\Repos\Retro\RetroDemo\bin\Debug\Fuel.exe.config
+C:\Users\David\Source\Repos\Retro\RetroDemo\bin\Debug\Fuel.exe
+C:\Users\David\Source\Repos\Retro\RetroDemo\bin\Debug\Fuel.pdb
+C:\Users\David\Source\Repos\Retro\RetroDemo\bin\Debug\Retro.dll
+C:\Users\David\Source\Repos\Retro\RetroDemo\bin\Debug\Retro.pdb
+C:\Users\David\Source\Repos\Retro\RetroDemo\obj\Debug\Fuel.csproj.AssemblyReference.cache
+C:\Users\David\Source\Repos\Retro\RetroDemo\obj\Debug\Fuel.Form1.resources
+C:\Users\David\Source\Repos\Retro\RetroDemo\obj\Debug\Fuel.Properties.Resources.resources
+C:\Users\David\Source\Repos\Retro\RetroDemo\obj\Debug\Fuel.csproj.GenerateResource.cache
+C:\Users\David\Source\Repos\Retro\RetroDemo\obj\Debug\Fuel.csproj.CoreCompileInputs.cache
+C:\Users\David\Source\Repos\Retro\RetroDemo\obj\Debug\Fuel.csproj.Up2Date
+C:\Users\David\Source\Repos\Retro\RetroDemo\obj\Debug\Fuel.exe
+C:\Users\David\Source\Repos\Retro\RetroDemo\obj\Debug\Fuel.pdb

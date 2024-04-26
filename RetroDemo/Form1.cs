@@ -35,5 +35,10 @@ namespace Fuel
         {
 
         }
+
+        private void trackBar1_ValueChanged(object sender, EventArgs e)
+        {
+            rollingNumber1.AnimationDelay = trackBar1.Value;
+        }
     }
 }

@@ -14,7 +14,28 @@ public class RollingNumber : UserControl
     private Brush foreBrush;
     private readonly int numberHeight;
     private bool incrementing;
+    private int animationDelay = 50;
 
+    public int AnimationDelay
+    {
+        get
+        {
+            return animationDelay;
+        }
+        set
+        {
+            animationDelay = value;
+            animationTimer = new Timer
+            {
+                Interval = animationDelay // Animation speed
+            };
+            animationTimer.Tick += (sender, e) => AnimateNumber();
+            if (this.DesignMode)
+            {
+                Invalidate(); // This ensures that the control is redrawn in the designer
+            }
+        }
+    }
     public RollingNumber()
     {
         retroFont = new Font("Consolas", 48, FontStyle.Bold);
@@ -22,18 +43,18 @@ public class RollingNumber : UserControl
         BackColor = Color.Black;
         numberHeight = (int)CreateGraphics().MeasureString("0", retroFont).Height;
 
-        animationTimer = new Timer
-        {
-            Interval = 50 // Animation speed
-        };
-        animationTimer.Tick += (sender, e) => AnimateNumber();
+        //animationTimer = new Timer
+        //{
+        //    Interval = animationDelay // Animation speed
+        //};
+        //animationTimer.Tick += (sender, e) => AnimateNumber();
         DoubleBuffered = true;
-
         // Handling the control's appearance in design mode
         if (this.DesignMode)
         {
             Invalidate(); // This ensures that the control is redrawn in the designer
         }
+
     }
 
     public void SetNumber(int number)

@@ -13,16 +13,14 @@ public partial class Flipper : UserControl
 
     private int animationStartTime;
 
-    private PictureBox pictureBox1 = new PictureBox();
-    private PictureBox pictureBox2 = new PictureBox();
-    private PictureBox pictureBox3 = new PictureBox();
-
+    private PictureBox pbTop = new PictureBox();
+    private PictureBox pbBott = new PictureBox();
+    private PictureBox pbFill = new PictureBox();
     /*
-        CSS
-        border-radius: 8px;
-        box-shadow: rgba(0,0,0,0.31) 5px 5px 10px 0px;
-    */
-
+    CSS
+    border-radius: 8px;
+    box-shadow: rgba(0,0,0,0.31) 5px 5px 10px 0px;
+*/
     public enum Style
     {
         Hour,
@@ -44,190 +42,212 @@ public partial class Flipper : UserControl
             }
         }
     }
+
     private void UpdateTimerInterval()
     {
         if (FlipperStyle == Style.Second)
             animationTimer.Interval = 1000; // 1 second for seconds
         else
             animationTimer.Interval = 50; // faster for smooth hour/minute animations
+        if (!DesignMode)
+        {
+            animationStartTime = Environment.TickCount;
+            animationTimer.Start();
+        }
     }
-
-
 
     public Flipper()
     {
+        //if (DesignMode)
+        //    return;
+
+        InitializeComponents();
+        InitializeTimer();
+        SizeFlaps();
+        LoadImages();
+        // Handling the control's appearance in design mode
+
+        UpdateTimerInterval();
+        UpdateDisplay(); // This ensures that the control is redrawn in the designer
+    }
+
+    private void InitializeComponents()
+    {
         this.DoubleBuffered = true;
 
-        pictureBox1.Dock = DockStyle.Top;
-        pictureBox2.Dock = DockStyle.Bottom;
-        pictureBox3.Dock = DockStyle.Fill;
-        pictureBox3.Visible = false;
+        pbTop.Dock = DockStyle.Top;
+        pbBott.Dock = DockStyle.Bottom;
+        pbFill.Dock = DockStyle.Fill;
+        pbFill.Visible = false;
 
-        this.Controls.Add(pictureBox3);
-        this.Controls.Add(pictureBox2);
-        this.Controls.Add(pictureBox1);
+        this.Controls.Add(pbFill);
+        this.Controls.Add(pbBott);
+        this.Controls.Add(pbTop);
 
         this.Resize += Flipper_Resize;
+        
+        
+    }
 
-        SizeFlaps();
-
+    private void InitializeTimer()
+    {
         animationTimer.Interval = 50; // Fast enough for smooth animation
-        animationTimer.Tick += AnimationTimer_Tick;
+        animationTimer.Tick += (sender, e) => AnimationTimer_Tick();
     }
 
     private void Flipper_Resize(object sender, EventArgs e)
     {
         SizeFlaps();
+        // Handling the control's appearance in design mode
+        UpdateTimerInterval();
+        UpdateDisplay(); // This ensures that the control is redrawn in the designer
     }
+
+    private void LoadImages()
+    {
+        try
+        {
+            CreateImages();
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions related to image creation
+            MessageBox.Show("Failed to create images: " + ex.Message);
+        }
+    }
+
+    const int Gap = 2;
 
     void SizeFlaps()
     {
-        // Calculate the height for each PictureBox, leaving space for a 5 pixel gap.
-        int combinedPictureBoxHeight = this.Height - 5; // Subtract the gap from the total height
-        pictureBox1.Height = combinedPictureBoxHeight / 2;
-        pictureBox2.Height = combinedPictureBoxHeight / 2;
+        pbFill.Width = pbTop.Width = pbBott.Width = this.Width;
 
-        // Adjust the location of pictureBox2 to create the gap between the two PictureBox controls.
-        pictureBox2.Top = pictureBox1.Bottom + 5;
+        int combinedPictureBoxHeight = this.Height - Gap;
+        
+        pbTop.Height = combinedPictureBoxHeight / 2;
+        
+        pbBott.Height = combinedPictureBoxHeight / 2;
+        pbBott.Top = pbTop.Bottom + 5;
 
-        pictureBox3.Height = this.Height;
-        pictureBox3.BringToFront(); // Ensure the animating PictureBox is on top
-
-        SizeFlaps();
-        CreateImages();
-        UpdateDisplay();
+        pbFill.Height = this.Height;
+        pbFill.BringToFront();
+        PerformAnimationStep(0);
     }
 
     private void CreateImages()
     {
         int width = this.Width;
-        int height = this.Height / 3;
+        int height =  (this.Height - Gap) /2;
 
         for (int x = 0; x < 60; x++)
         {
-            Bitmap img = new Bitmap(width, height * 2);
+            using (Bitmap img = new Bitmap(width, height * 2))
             using (Graphics gr = Graphics.FromImage(img))
             {
                 gr.SmoothingMode = SmoothingMode.AntiAlias;
                 gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 gr.CompositingQuality = CompositingQuality.HighQuality;
-
                 gr.Clear(Color.Black);
-                StringFormat sf = new StringFormat
+                gr.DrawString(x.ToString("00"), new Font(this.Font.FontFamily, height * 0.9f, FontStyle.Regular, GraphicsUnit.Pixel), Brushes.White, new RectangleF(0, 0, width, height * 2), new StringFormat
                 {
                     Alignment = StringAlignment.Center,
                     LineAlignment = StringAlignment.Center
-                };
-                gr.DrawString(x.ToString("00"), new Font(this.Font.FontFamily, height * 0.9f, FontStyle.Regular, GraphicsUnit.Pixel), Brushes.White, new RectangleF(0, 0, width, height * 2), sf);
-            }
+                });
 
-            upperImages[x] = new Bitmap(width, height);
-            lowerImages[x] = new Bitmap(width, height);
-            using (Graphics grUpper = Graphics.FromImage(upperImages[x]))
-            using (Graphics grLower = Graphics.FromImage(lowerImages[x]))
-            {
-                grUpper.DrawImage(img, new Rectangle(0, 0, width, height), new Rectangle(0, 0, width, height), GraphicsUnit.Pixel);
-                grLower.DrawImage(img, new Rectangle(0, 0, width, height), new Rectangle(0, height, width, height), GraphicsUnit.Pixel);
+                upperImages[x] = new Bitmap(width, height);
+                lowerImages[x] = new Bitmap(width, height);
+                using (Graphics grUpper = Graphics.FromImage(upperImages[x]))
+                using (Graphics grLower = Graphics.FromImage(lowerImages[x]))
+                {
+                    grUpper.DrawImage(img, new Rectangle(0, 0, width, height), new Rectangle(0, 0, width, height), GraphicsUnit.Pixel);
+                    grLower.DrawImage(img, new Rectangle(0, 0, width, height), new Rectangle(0, height, width, height), GraphicsUnit.Pixel);
+                }
             }
         }
     }
+
 
     private void UpdateDisplay()
     {
-        int index;
+        int index = GetCurrentIndex();
 
-        if (FlipperStyle == Style.Hour)
-        {
-            index = DateTime.Now.Hour % 24;  // Hours are usually represented in a 24-hour format.
-        }
-        else if (FlipperStyle == Style.Minute)
-        {
-            index = DateTime.Now.Minute;  // Minutes and seconds from 0 to 59.
-        }
-        else if (FlipperStyle == Style.Second)
-        {
-            index = DateTime.Now.Second;  // Include support for seconds.
-        }
-        else
-        {
-            throw new InvalidOperationException("Unsupported flipper style");
-        }
-
-        // Ensure the selected index is within bounds of the image arrays
         if (index >= 0 && index < 60)
         {
-            pictureBox1.Image = upperImages[index];  // Update the upper part image.
-            pictureBox1.Tag = index;                 // Store the current index as Tag for reference.
-            pictureBox2.Image = lowerImages[index];  // Update the lower part image.
+            pbTop.Image = upperImages[index];
+            pbTop.Tag = index;
+            pbBott.Image = lowerImages[index];
         }
         else
         {
-            // Handle the case where the index is out of bounds, though this should not occur.
-            throw new IndexOutOfRangeException("Index for images is out of expected range (0-59).");
+            MessageBox.Show("Index for images is out of expected range (0-59).");
         }
     }
 
-
-    //private void PerformAnimationStep()
-    //{
-    //    int flipHeight = pictureBox3.Height;
-    //    int stepHeight = flipHeight / totalAnimationSteps;
-    //    int currentTop = stepHeight * animationStep;
-
-    //    pictureBox3.Height = flipHeight - currentTop;
-    //    pictureBox3.Top = currentTop;
-    //    pictureBox3.Refresh();
-    //}
-
-    // ... (Other parts of the Flipper class remain unchanged) ...
-
-    // This method will be called every time the timer ticks.
-    private void AnimationTimer_Tick(object sender, EventArgs e)
+    private int GetCurrentIndex()
     {
+        switch (FlipperStyle)
+        {
+            case Style.Hour:
+            return DateTime.Now.Hour % 24;
+            case Style.Minute:
+            return DateTime.Now.Minute;
+            case Style.Second:
+            return DateTime.Now.Second;
+            default:
+            throw new InvalidOperationException("Unsupported flipper style");
+        }
+    }
+
+    private void AnimationTimer_Tick()
+    {
+        // Prevent the flip if the new value is the same as the current one.
+        //    if (Convert.ToInt32(pictureBox1.Tag) == newValue) return;
+
         // Duration of the animation in milliseconds.
         const double animationDuration = 500;
-        // Calculate the fraction of the elapsed time relative to the total animation duration.
         double timeFraction = (Environment.TickCount - animationStartTime) / animationDuration;
 
         if (timeFraction >= 1)
         {
-            // Stop the timer if the animation has completed.
-            animationTimer.Stop();
-            // Hide the animating PictureBox.
-            pictureBox3.Visible = false;
-            // Reset the animation step counter.
-            animationStep = 0;
+            if (!DesignMode)
+            {
+                UpdateDisplay();
+                animationStartTime = Environment.TickCount;
+                animationTimer.Start();
+                // animationTimer.Stop();
+            }
+
+
+            pbFill.Visible = false;
             return;
         }
 
-        // Apply ease-in-out interpolation for a smoother animation.
         timeFraction = EaseInOutCubic(timeFraction);
-        // Update the animation based on the interpolated time fraction.
         PerformAnimationStep(timeFraction);
     }
 
-
-    // Interpolation function for the animation easing (ease-in-out cubic).
     private double EaseInOutCubic(double t)
     {
         return t < 0.5 ? 4 * t * t * t : 1 - Math.Pow(-2 * t + 2, 3) / 2;
     }
 
-    // Update the animation for the current time fraction.
     private void PerformAnimationStep(double fraction)
     {
-        // Calculate the height for the current step of the animation.
-        int flipHeight = pictureBox3.Height;
-        int newHeight = (int)(flipHeight * (1 - fraction));
+        int flipHeight = pbFill.Height;
+        int newHeight = (int) (flipHeight * (1 - fraction));
         int newTop = flipHeight - newHeight;
 
+        pbFill.Invalidate(new Rectangle(0, newTop, pbFill.Width, newHeight + 1));
+
+
+        /*
         // Redraw only the changing part of the PictureBox for better performance.
         Rectangle invalidRect = new Rectangle(0, newTop, pictureBox3.Width, newHeight + 1);
         pictureBox3.Invalidate(invalidRect);
-        pictureBox3.Update();
-    }
 
-    //// Start the flipping animation to show a new value.
+        pictureBox3.Update();
+
+            //// Start the flipping animation to show a new value.
     //public void StartFlip(int newValue)
     //{
     //    // Prevent the flip if the new value is the same as the current one.
@@ -249,38 +269,6 @@ public partial class Flipper : UserControl
     //    animationTimer.Start();
     //}
 
-    public void StartFlip()
-    {
-        int currentValue = Convert.ToInt32(pictureBox1.Tag);
-        int newValue;
-
-        switch (FlipperStyle)
-        {
-            case Style.Hour:
-                newValue = DateTime.Now.Hour % 24;
-                break;
-            case Style.Minute:
-                newValue = DateTime.Now.Minute;
-                break;
-            case Style.Second:
-                newValue = DateTime.Now.Second;
-                break;
-            default:
-                newValue = 0;
-                break;
-        }
-
-        if (currentValue == newValue) return;
-
-        pictureBox3.Top = 0;
-        pictureBox3.Image = pictureBox1.Image;
-        pictureBox3.Visible = true;
-
-        pictureBox1.Image = upperImages[newValue];
-        pictureBox1.Tag = newValue;
-
-        animationStartTime = Environment.TickCount;
-        animationTimer.Start();
+        */
     }
-
 }
